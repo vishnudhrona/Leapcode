@@ -55,8 +55,8 @@ const CustomerManagement = () => {
                                 >
                                     {value?.name}
                                 </th>
-                                <td className="px-6 py-4">${value?.number}</td>
                                 <td className="px-6 py-4">{value?.email}</td>
+                                <td className="px-6 py-4">{value?.number}</td>
                             </tr>
                         ))}
                     </tbody>

@@ -21,7 +21,7 @@ export const userLogin = async (req: Request, res: Response): Promise<Response |
           );
           
           if (!user) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(200).json({ status: false, message: 'Invalid credentials' });
           }
 
           const userForToken: User = {
