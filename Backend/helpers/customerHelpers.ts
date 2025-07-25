@@ -123,10 +123,27 @@ export const fetchCartItem =  async (customerid: string): Promise<LoginResponse>
     }
 }
 
+export const deleteCartItem = async (producId: string): Promise<LoginResponse> => {
+    try {
+        const deletedCount = await CartItem.destroy({
+            where: { id: producId }
+          });
+
+          if (deletedCount === 0) {
+            return { status: false, message: "Product not found" };
+          }
+
+          return { status: true, message: "Product deleted successfully" };
+    } catch(error) {
+        return { status: false, message: "Something went wrong while deleting the product" };
+    }
+}
+
 
 export default {
     customenSignup,
     customerLogin,
     addProductToCart,
     fetchCartItem,
+    deleteCartItem,
 };

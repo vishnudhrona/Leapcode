@@ -109,9 +109,29 @@ export const fetchAllCartItem = async (req: Request, res: Response): Promise<Res
     }
 }
 
+export const deleteCartItem = async (req: Request, res: Response): Promise<Response | void> => {
+    try {
+        const { id } = req.query
+
+        if(!id || typeof id !== 'string') {
+            return res.status(400).json({ status: false, message: "User ID is required and must be a string" });
+        }
+
+        const cartItem = await customerHelpers.deleteCartItem(id)
+
+        if(cartItem?.status) {
+            res.status(200).json({ status: true, message: "Deleted successfully" })
+        }
+
+    } catch(error) {
+        console.error(error);
+    }
+}
+
 export default {
     customerSignup,
     customerLogin,
     addCartItem,
-    fetchAllCartItem
+    fetchAllCartItem,
+    deleteCartItem
 }

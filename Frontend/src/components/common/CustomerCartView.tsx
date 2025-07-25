@@ -24,6 +24,9 @@ interface Product {
 const CustomerCartView = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loggedIn, setLoggedIn] = useState<DecodedToken | null>(null);
+    const [refresh, setRefresh] = useState<boolean>(false)
+
+    const token = localStorage.getItem('customerToken');
 
     useEffect(() => {
         const token = localStorage.getItem('customerToken');
@@ -38,7 +41,6 @@ const CustomerCartView = () => {
             if (!loggedIn?.id) return;
 
             try {
-                const token = localStorage.getItem('customerToken');
                 const response = await instance.get(
                     `/customer/fetchcartitem?customerid=${loggedIn?.id}`,{
                         headers: {
@@ -60,7 +62,7 @@ const CustomerCartView = () => {
         };
 
         fetchProducts();
-    }, [loggedIn]);
+    }, [loggedIn, refresh]);
 
     const updateQuantity = (index: number, type: 'increase' | 'decrease') => {
         setProducts(prev => {
@@ -77,8 +79,24 @@ const CustomerCartView = () => {
         });
     };
 
-    const removeItem = (index: number) => {
-        setProducts(prev => prev.filter((_, i) => i !== index));
+    const removeItem = async (id: number) => {
+        const confirmed = window.confirm("Are you sure you want to delete this product?");
+
+        if (!confirmed) return;
+        try {
+            const response = await instance.delete(`/customer/deletecartitem?id=${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+
+            if(response?.data?.status) {
+                setRefresh(!refresh)
+            }
+            
+        } catch(error) {
+            console.error(error);
+        }
     };
 
     return (
@@ -137,7 +155,7 @@ const CustomerCartView = () => {
                                             </button>
                                         </div>
                                         <button 
-                                            onClick={() => removeItem(index)}
+                                            onClick={() => removeItem(item?.id)}
                                             className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                                         >
                                             <Trash2 className="w-5 h-5" />
