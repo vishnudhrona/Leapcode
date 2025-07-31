@@ -3,7 +3,7 @@ interface ButtonFieldProps {
     type?: 'submit' | 'reset' | 'button';
     buttonClassName: string
     value: string
-    onClick?: () => void;
+    onClick?: (e: any) => void;
 }
 
 const Button: React.FC<ButtonFieldProps> = ({type, buttonClassName, value, onClick}) => {

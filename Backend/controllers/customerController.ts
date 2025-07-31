@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import Customer from '../dbSchema/customer';
 import customerHelpers from '../helpers/customerHelpers';
 import generateToken from '../utils/generateToken';
 
@@ -20,6 +19,15 @@ interface User {
     image?: string;
     imageUrl?: string;
   }
+
+  interface ProductType {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    stock: number;
+    image: string;
+}
 
 export const customerSignup = async (req: Request, res: Response): Promise<Response | void> => {
     try {
@@ -83,6 +91,8 @@ export const addCartItem = async (req: Request, res: Response): Promise<Response
 
         if(newCartItem?.status) {
             res.status(200).json({ status: true, message: newCartItem?.message})
+        } else {
+            res.status(200).json({ status: false, message: newCartItem?.message})
         }
 
     } catch(error) {
@@ -128,10 +138,39 @@ export const deleteCartItem = async (req: Request, res: Response): Promise<Respo
     }
 }
 
+export const fetchSingleProduct = async (req: Request, res: Response): Promise<Response | void> => {
+    try {
+        const { id } = req.query;
+        
+        const BASE_URL = "http://localhost:3000/uploads";
+
+        if (!id || typeof id !== 'string') {
+            return res.status(400).json({ status: false, message: "Product ID is required and must be a string" });
+        }
+
+        const singleProduct = await customerHelpers.fetchSingleProduct(id)
+
+        if (!singleProduct) {
+            return res.status(404).json({ status: false, message: "Product not found" });
+        }     
+        
+        const formattedProducts = {
+            ...singleProduct?.payload,
+            imageUrl: `${BASE_URL}/${singleProduct?.payload?.image}`
+        }
+
+        return res.status(200).json({ status: true, payload: formattedProducts });
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 export default {
     customerSignup,
     customerLogin,
     addCartItem,
     fetchAllCartItem,
-    deleteCartItem
+    deleteCartItem,
+    fetchSingleProduct
 }

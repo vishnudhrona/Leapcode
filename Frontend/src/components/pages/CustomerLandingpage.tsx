@@ -17,10 +17,7 @@ const CustomerLandingpage = () => {
         };
 
         fetchProducts();
-    }, [])
-
-    console.log(22,products);
-    
+    }, [])    
 
     return (
         <>

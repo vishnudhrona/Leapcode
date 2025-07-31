@@ -1,6 +1,7 @@
 import CartItem from "../dbSchema/cartItem";
 import Customer from "../dbSchema/customer";
 import bcrypt from 'bcrypt';
+import Product from "../dbSchema/product";
 
 interface CustomerDetails {
     name: string;
@@ -34,6 +35,22 @@ interface CustomerDetails {
     description?: string;
     image?: string;
     imageUrl?: string;
+  }
+
+  interface ProductPayload {
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+    stock: number;
+    image: string;
+    // Add any other fields your product has
+  }
+  
+  interface ProductResponse {
+    status: boolean;
+    message: string;
+    payload?: ProductPayload;
   }
 
 export const customenSignup =  async (customerDetails: CustomerDetails): Promise<{ status: boolean; message: string }> => {
@@ -100,6 +117,17 @@ export const customerLogin = async (loginDetails: LoginDetails): Promise<LoginRe
 
 export const addProductToCart =  async (payload: CartItemPayload): Promise<LoginResponse> => {
     try {
+
+        const existingCartItem = await CartItem.findOne({
+            where: {
+                productId: payload?.productId
+            }
+        });
+
+        if (existingCartItem) {
+           return { status: false, message: "Item already exisist in your cart" };       
+         }
+
         const newCartItem = await CartItem.create(payload);
 
         return { status: true, message: 'Product added to cart successfully'};
@@ -139,6 +167,20 @@ export const deleteCartItem = async (producId: string): Promise<LoginResponse> =
     }
 }
 
+export const fetchSingleProduct = async (id: string): Promise<ProductResponse> => {
+    try {
+        
+        const singleProduct = await Product.findOne({
+           where: { id: id }
+        })        
+
+        return { status: true, message: "Product find successfullu", payload: singleProduct?.dataValues }
+
+    } catch(error) {
+        return { status: false, message: "Something went wrong while deleting the product" };
+    }
+}
+
 
 export default {
     customenSignup,
@@ -146,4 +188,5 @@ export default {
     addProductToCart,
     fetchCartItem,
     deleteCartItem,
+    fetchSingleProduct
 };

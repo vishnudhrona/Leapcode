@@ -2,6 +2,7 @@ import { Bounce, toast, ToastContainer } from "react-toastify";
 import instance from "../../axios/Axios";
 import Button from "./Button";
 import { jwtDecode } from "jwt-decode";
+import { Link } from "react-router-dom";
 
 interface Product {
     id: number;
@@ -46,10 +47,22 @@ const AllProducts: React.FC<AllProductsProps> = ({ data }) => {
                 })
 
 
-            }
+            }            
 
             if (response?.data?.status) {
                 toast.success('Item added to your cart', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    transition: Bounce,
+                });
+            } else {
+                toast.error('Item already exisist in your cart', {
                     position: "top-right",
                     autoClose: 5000,
                     hideProgressBar: false,
@@ -89,7 +102,7 @@ const AllProducts: React.FC<AllProductsProps> = ({ data }) => {
             <h1 className="text-[60px] font-semibold my-10">All Products</h1>
             <div className="grid grid-cols-4 gap-10">
                 {data?.map((value, index) => (
-                    <div key={index} className="w-60 max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                    <Link to={`/singleproductview/${value?.id}`} key={index} className="w-60 max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
                         <a href="#">
                             <img className="rounded-t-lg object-cover h-40" src={value?.imageUrl} alt="" />
                         </a>
@@ -106,10 +119,14 @@ const AllProducts: React.FC<AllProductsProps> = ({ data }) => {
                                 type="button"
                                 buttonClassName="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600"
                                 value="Add To Cart"
-                                onClick={() => addToCart(value)}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    addToCart(value);
+                                }}
                             />
                         </div>
-                    </div>
+                    </Link>
                 ))}
             </div>
         </>

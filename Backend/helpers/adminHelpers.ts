@@ -23,7 +23,11 @@ export const addProduct = async (product: IProduct): Promise<{ status: boolean; 
 
 export const fetchAllProducts = async (): Promise<{ status: boolean; products?: any[]; message?: string; }> => {
     try {
-        const products = await ProductModel.findAll();
+        const products = await ProductModel.findAll(
+            {
+                order: [['createdAt', 'ASC']]
+            }
+        );
 
         return products
 

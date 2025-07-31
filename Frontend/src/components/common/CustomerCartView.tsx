@@ -29,7 +29,6 @@ const CustomerCartView = () => {
     const token = localStorage.getItem('customerToken');
 
     useEffect(() => {
-        const token = localStorage.getItem('customerToken');
         if (token) {
             const decoded = jwtDecode<DecodedToken>(token);
             setLoggedIn(decoded || null);
@@ -112,64 +111,72 @@ const CustomerCartView = () => {
             <div className="lg:grid lg:grid-cols-12 lg:gap-8">
                 <div className="lg:col-span-8">
                     <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-                        {products.map((item, index) => (
-                            <div
-                                key={item.id}
-                                className={`p-6 ${index !== products.length - 1 ? 'border-b border-gray-200' : ''}`}
-                            >
-                                <div className="flex items-start space-x-4">
-                                    <div className="flex-shrink-0">
-                                        <img
-                                            src={item.imageUrl}
-                                            alt={item.image}
-                                            className="w-24 h-24 object-cover rounded-lg border border-gray-200"
-                                        />
-                                    </div>
-
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                                            {item.name}
-                                        </h3>
-                                        <p className="text-xl font-bold text-gray-900">${item.price}</p>
-                                        <p className="text-sm text-gray-500">Stock: {item.stock}</p>
-                                    </div>
-
-                                    <div className="flex items-center space-x-3">
-                                        <div className="flex items-center border border-gray-300 rounded-lg">
-                                            <button
-                                                onClick={() => updateQuantity(index, 'decrease')}
-                                                disabled={item.quantity <= 1}
-                                                className="p-2 hover:bg-gray-100 rounded-l-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        {products.length > 0 ? (
+                            <>
+                            {products.map((item, index) => (
+                                <div
+                                    key={item.id}
+                                    className={`p-6 ${index !== products.length - 1 ? 'border-b border-gray-200' : ''}`}
+                                >
+                                    <div className="flex items-start space-x-4">
+                                        <div className="flex-shrink-0">
+                                            <img
+                                                src={item.imageUrl}
+                                                alt={item.image}
+                                                className="w-24 h-24 object-cover rounded-lg border border-gray-200"
+                                            />
+                                        </div>
+    
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                                                {item.name}
+                                            </h3>
+                                            <p className="text-xl font-bold text-gray-900">${item.price}</p>
+                                            <p className="text-sm text-gray-500">Stock: {item.stock}</p>
+                                        </div>
+    
+                                        <div className="flex items-center space-x-3">
+                                            <div className="flex items-center border border-gray-300 rounded-lg">
+                                                <button
+                                                    onClick={() => updateQuantity(index, 'decrease')}
+                                                    disabled={item.quantity <= 1}
+                                                    className="p-2 hover:bg-gray-100 rounded-l-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    <Minus className="w-4 h-4 text-gray-600" />
+                                                </button>
+                                                <span className="px-4 py-2 border-l border-r border-gray-300 bg-gray-50 font-medium min-w-[3rem] text-center">
+                                                    {item.quantity}
+                                                </span>
+                                                <button
+                                                    onClick={() => updateQuantity(index, 'increase')}
+                                                    disabled={item.quantity >= item.stock}
+                                                    className="p-2 hover:bg-gray-100 rounded-r-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    <Plus className="w-4 h-4 text-gray-600" />
+                                                </button>
+                                            </div>
+                                            <button 
+                                                onClick={() => removeItem(item?.id)}
+                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                                             >
-                                                <Minus className="w-4 h-4 text-gray-600" />
-                                            </button>
-                                            <span className="px-4 py-2 border-l border-r border-gray-300 bg-gray-50 font-medium min-w-[3rem] text-center">
-                                                {item.quantity}
-                                            </span>
-                                            <button
-                                                onClick={() => updateQuantity(index, 'increase')}
-                                                disabled={item.quantity >= item.stock}
-                                                className="p-2 hover:bg-gray-100 rounded-r-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                            >
-                                                <Plus className="w-4 h-4 text-gray-600" />
+                                                <Trash2 className="w-5 h-5" />
                                             </button>
                                         </div>
-                                        <button 
-                                            onClick={() => removeItem(item?.id)}
-                                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                                        >
-                                            <Trash2 className="w-5 h-5" />
-                                        </button>
+                                    </div>
+    
+                                    <div className="mt-4 flex justify-between items-center">
+                                        <span className="text-sm text-gray-500">
+                                            Item total: ${(item.price * item.quantity).toFixed(2)}
+                                        </span>
                                     </div>
                                 </div>
-
-                                <div className="mt-4 flex justify-between items-center">
-                                    <span className="text-sm text-gray-500">
-                                        Item total: ${(item.price * item.quantity).toFixed(2)}
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                            </>
+                        ) : (
+                            <>
+                            <h1 className='text-5xl font-bold py-5 text-red-700'>Cart is empty</h1>
+                            </>
+                        )}
                     </div>
 
                     <div className="mt-6">

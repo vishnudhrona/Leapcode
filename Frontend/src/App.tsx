@@ -7,6 +7,7 @@ import Customersignup from './components/pages/Customersignup'
 import CustomerLandingpage from './components/pages/CustomerLandingpage'
 import CustomerCart from './components/pages/CustomerCart'
 import CustomerManagement from "./components/pages/CustomerManagement"
+import SingleProductView from './components/pages/SingleProductView'
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
       <Route path="/customerlandingpage" element={<CustomerLandingpage />} />
       <Route path="/customercart" element={<CustomerCart />} />
       <Route path='/customermanagement' element={<CustomerManagement />} />
+      <Route path='/singleproductview/:id' element={<SingleProductView />} />
     </Routes>
     </BrowserRouter>
   )
